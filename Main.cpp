@@ -1,40 +1,74 @@
-#include<iostream>          // Include the input/output stream library
-#include<glad/glad.h>       // Include the glad library for OpenGL function definitions
-#include<GLFW/glfw3.h>      // Include the GLFW library for window management
+#include <iostream>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 int main()
 {
-	glfwInit();                 // Initialize GLFW version 3.3 
+    glfwInit();
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);      // Set the major version of the OpenGL context to 3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);      // Set the minor version of the OpenGL context to 3
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);    // Set the OpenGL profile to the core profile
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(800, 800, "Loader", NULL, NULL);   // Create a window with a specific size and title
-	if (window == NULL)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;    // Print an error message if window creation fails
-		glfwTerminate();    // Terminate GLFW
-		return -1;          // Exit the program with an error code
-	}
+    GLFWwindow* window = glfwCreateWindow(800, 800, "Loader", nullptr, nullptr);
+    if (window == nullptr)
+    {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
 
-	glfwMakeContextCurrent(window);    // Make the newly created window the current context
+    glfwMakeContextCurrent(window);
 
-	gladLoadGL();    // Load the OpenGL function pointers using glad
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        return -1;
+    }
 
-	glViewport(0, 0, 800, 800);    // Set the viewport size
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);    // Set the clear color to a dark blue
-	glClear(GL_COLOR_BUFFER_BIT);    // Clear the color buffer
-	glfwSwapBuffers(window);    // Swap the front and back buffers to update the window
+    ImGui::StyleColorsDark();
 
-	while (!glfwWindowShouldClose(window))    // Loop until the window should be closed
-	{
-		glfwPollEvents();    // Process events
-	}
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330 core");
 
-	glfwDestroyWindow(window);    // Destroy the window
-	glfwTerminate();    // Terminate GLFW
-	return 0;    // Exit the program with a success code
+    glViewport(0, 0, 800, 800);
+    glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+
+    while (!glfwWindowShouldClose(window))
+    {
+        glfwPollEvents();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // ImGui code goes here
+        ImGui::Begin("Hello, ImGui!");
+        ImGui::Text("Welcome to ImGui!");
+        ImGui::End();
+
+        ImGui::Render();
+        int display_w, display_h;
+        glfwGetFramebufferSize(window, &display_w, &display_h);
+        glViewport(0, 0, display_w, display_h);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        glfwSwapBuffers(window);
+    }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    return 0;
 }
