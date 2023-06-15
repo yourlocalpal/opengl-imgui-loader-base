@@ -8,4 +8,5 @@ Commit 2: ImGui renders in the openGL window. Base loader completed.
 # Explanation:
 
   GLFW: GLFW is a library that provides a platform-independent API for creating and managing windows, contexts, and input in OpenGL and other graphics APIs.
+  
   OpenGL: OpenGL is the graphics API used for rendering 2D and 3D graphics. It provides functions like glViewport(), glClearColor(), and glClear() to set the viewport size, define the clear color, and clear the color buffer, respectively. OpenGL is also used to load the necessary OpenGL function pointers using gladLoadGL().
